@@ -1,6 +1,6 @@
 import pygame, sys, random
 from pygame.math import Vector2
-from pyrsistent import s
+
 
 class Fruit:
     def __init__(self):
@@ -9,7 +9,8 @@ class Fruit:
     
     def draw_fruit(self):
         fruit_rect = pygame.Rect(self.pos.x *cell_size,self.pos.y *cell_size,cell_size,cell_size)
-        pygame.draw.rect(screen,(126,166,114),fruit_rect)
+        screen.blit(apple, fruit_rect)
+        #pygame.draw.rect(screen,(126,166,114),fruit_rect)
     
     def randomize(self):
             self.x = random.randint(0, cell_number - 1)
@@ -24,12 +25,37 @@ class Snake:
         self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)]
         self.direction = Vector2(1,0)
         self.new_block = False
+        
+        self.head_up = pygame.image.load("Personal Projects/Graphics/Snake_head_up.png")                    #Drawing the Snake
+        self.head_down = pygame.image.load("Personal Projects/Graphics/Snake_head_down.png")
+        self.head_right = pygame.image.load("Personal Projects/Graphics/Snake_head_right.png")
+        self.head_left = pygame.image.load("Personal Projects/Graphics/Snake_head_left.png")
+        
+        self.body_horizontal = pygame.image.load("Personal Projects/Graphics/Snake_body_horizontal.png")
+        self.body_vertical = pygame.image.load("Personal Projects/Graphics/Snake_body_vertical.png")
+        
+        self.tail_left = pygame.image.load("Personal Projects/Graphics/Snake_tail_left.png")
+        self.tail_right = pygame.image.load("Personal Projects/Graphics/Snake_tail_right.png")
+        self.tail_up = pygame.image.load("Personal Projects/Graphics/Snake_tail_up.png")
+        self.tail_down = pygame.image.load("Personal Projects/Graphics/Snake_tail_down.png")
+        
+        self.turn_left = pygame.image.load("Personal Projects/Graphics/Snake_turn_left.png")
+        self.turn_right = pygame.image.load("Personal Projects/Graphics/Snake_turn_right.png")
+        self.back_left = pygame.image.load("Personal Projects/Graphics/Snake_back_left.png")
+        self.back_right = pygame.image.load("Personal Projects/Graphics/Snake_back_right.png")
+    
     def draw_snake(self):
-        for block in self.body:
+        for index,block in enumerate(self.body):
             x_pos = block.x * cell_size
             y_pos = block.y * cell_size
             block_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
-            pygame.draw.rect(screen,(183,111,122),block_rect)
+            
+            # what direction is the face heading
+            if index == 0:
+                screen.blit(self.head_right,block_rect)
+            else:
+                pygame.draw.rect(screen,(85,0,87), block_rect)
+
 
     def move_snake(self):
         if self.new_block == True:
@@ -94,6 +120,7 @@ cell_number = 20
 screen = pygame.display.set_mode((cell_number * cell_size,cell_number * cell_size)) 
 clock = pygame.time.Clock()
 clock = pygame.time.Clock()
+apple = pygame.image.load('Personal Projects/Graphics/apple.png').convert_alpha()
 
 main_game = Main()
 
@@ -123,7 +150,7 @@ while True:                                                            # Main ga
                 if main_game.snake.direction.x != -1:
                     main_game.snake.direction = Vector2(1,0)
 
-    screen.fill((175,215,70))
+    screen.fill((175,0,0))
     main_game.draw_elements()
     pygame.display.update()
     clock.tick(60)
