@@ -45,6 +45,10 @@ class Snake:
         self.back_right = pygame.image.load("Personal Projects/Graphics/Snake_back_right.png")
     
     def draw_snake(self):
+        
+        self.update_head_graphics()
+        self.update_tail_graphics()
+
         for index,block in enumerate(self.body):
             x_pos = block.x * cell_size
             y_pos = block.y * cell_size
@@ -52,11 +56,48 @@ class Snake:
             
             # what direction is the face heading
             if index == 0:
-                screen.blit(self.head_right,block_rect)
+                screen.blit(self.head,block_rect)
+            elif index == len(self.body) - 1:
+                screen.blit(self.tail,block_rect)
             else:
-                pygame.draw.rect(screen,(85,0,87), block_rect)
+                previous_block = self.body[index + 1] - block 
+                next_block = self.body[index - 1] - block
+                if previous_block.x == next_block.x:
+                    screen.blit(self.body_vertical, block_rect)
+                elif previous_block.y == next_block.y:
+                    screen.blit(self.body_horizontal, block_rect)
+                else:
+                    if previous_block.x == -1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == -1: # Snake turning graphics logic
+                        screen.blit(self.back_left,block_rect)
+                    if previous_block.x == -1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == -1: #code is looking at the next and previous position of the head to figure out what image to use.
+                        screen.blit(self.turn_left,block_rect)
+                    if previous_block.x == 1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == 1:
+                        screen.blit(self.back_right,block_rect)
+                    if previous_block.x == 1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == 1:
+                        screen.blit(self.turn_right,block_rect)
+                    
+
+                        
+    
+    def update_head_graphics(self):                                     # Snake head update feature
+        head_relation = self.body[1] - self.body[0]
+        if head_relation == Vector2(1,0): self.head = self.head_left
+        elif head_relation == Vector2(-1,0): self.head = self.head_right
+        elif head_relation == Vector2(0,1): self.head = self.head_up
+        elif head_relation == Vector2(0,-1): self.head = self.head_down
+    
+    def update_tail_graphics(self):
+        tail_relation = self.body[-2] - self.body[-1]
+        if tail_relation == Vector2(1,0): self.tail = self.tail_left
+        elif tail_relation == Vector2(-1,0): self.tail = self.tail_right
+        elif tail_relation == Vector2(0,1): self.tail = self.tail_up
+        elif tail_relation == Vector2(0,-1): self.tail = self.tail_down
+    
+    
 
 
+    
+    
     def move_snake(self):
         if self.new_block == True:
             body_copy = self.body[:]
@@ -89,7 +130,8 @@ class Main:
     def draw_elements(self):
         self.fruit.draw_fruit()
         self.snake.draw_snake()
-    
+        self.draw_grass()
+
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
             print("snack")
@@ -102,15 +144,21 @@ class Main:
                 self.game_over()
 
         for block in self.snake.body[1:]:
-            if block == self.snake.body[0]:
+            if block == self.snake.body[0]: # check if snake hits itself
                 self.game_over()        
-        
+
+    def draw_grass(self):
+        grass_color = (167,209,61)
+        for col in range(cell_number):
+            if col % 2 == 0:
+                grass_rect = pygame.Rect(col * cell_size,0,cell_size,cell_size)
+                pygame.draw.rect(screen, grass_color, grass_rect)   
     
     def game_over(self):
         pygame.QUIT
         sys.exit()
 
-        # check if snake hits itself
+        
 
 
 # game interface
